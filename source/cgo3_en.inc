@@ -23,7 +23,9 @@ resourcestring                                     {english}
   rsPC1Tab1='Overview';
   rsPC1Tab2='Elevation histogram';
   rsPC1Tab3='Display files';
-  capSettings='Settings';
+  capSettings='Basic settings';
+  capCameraSettings='Camera settings';
+  hntCameraSettings='Edit camera settings';
   capForm1='CGO3 control and geotagging';
   capLabel2='FlightLog:';
   capLabel3='Drone-ID:';

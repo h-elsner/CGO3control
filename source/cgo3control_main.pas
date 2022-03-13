@@ -279,8 +279,8 @@ begin
   gbCGO3Status.Hint:=rsCGOstat;
   gbVideoRecord.Caption:=capGroupBox7;
   gbVideoRecord.Hint:=capGroupBox7;
-  gbVideoSettings.Caption:=capTabSheet12;
-  gbVideoSettings.Hint:=capTabSheet12;
+  gbVideoSettings.Caption:=capCameraSettings;
+  gbVideoSettings.Hint:=hntCameraSettings;
   GroupBox9.Caption:=capGroupBox9;
   GroupBox9.Hint:=hntEdit3;
   Tag:=ord(DefaultFormatSettings.DecimalSeparator); {Original zwischenspeichern}

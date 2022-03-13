@@ -26,7 +26,9 @@ resourcestring                                     {deutsch}
   capLabel3='Kopter-ID:';
   capLabel13='Beginn';
   capLabel14='Ende';
-  capSettings='Einstellungen';
+  capSettings='Basisdaten';
+  capCameraSettings='Kameraeinstellungen';
+  hntCameraSettings='Kameraeinstellungen ändern';
   hntEdit1='Bezeichnung und/oder Seriennummer des Kopters eingeben';
   capBitBtn1='&Beenden';
   hntBitBtn1='Anwendung beenden';
@@ -38,7 +40,6 @@ resourcestring                                     {deutsch}
   hntListBox1='Wähle Flugnummer aus/Doppelklick zum Neuladen';
   capRadioGroup2='Format';
   hntRadiogroup2='Ausgabeformat beim Konvertieren';
-  capTabSheet12='Diverse Einstellungen';
   capColorButton1='Farbe';
   capLabel4='Sättigung';
   rsNoArch='Nichts da zum Archivieren';

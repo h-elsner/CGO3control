@@ -1224,8 +1224,8 @@ object Form1: TForm1
         OnMouseMove = gridTimeAreaMouseMove
         ColWidths = (
           85
-          143
-          144
+          135
+          135
         )
       end
       object lblTimeOffset: TLabel

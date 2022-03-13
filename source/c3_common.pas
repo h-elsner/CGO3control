@@ -97,8 +97,8 @@ const
 
 var timestr: string;
 
-{$I cgo3_dt.inc}
-{.$I cgo3_en.inc}
+{.$I cgo3_dt.inc}
+{$I cgo3_en.inc}
 
 {Public functions and procedures}
 
