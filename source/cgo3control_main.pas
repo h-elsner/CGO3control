@@ -333,6 +333,7 @@ begin
   edReceiveCGO3.Hint:=hntEdit4;
   edSendCGO3.TextHint:=hntEdit3;
   edReceiveCGO3.TextHint:=hntEdit4;
+  gbSettings.Caption:=capSettings;
 
 {GeoTagging}
   lblPicFolder.Caption:=capPicFolder;

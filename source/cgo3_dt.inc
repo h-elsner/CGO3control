@@ -26,6 +26,7 @@ resourcestring                                     {deutsch}
   capLabel3='Kopter-ID:';
   capLabel13='Beginn';
   capLabel14='Ende';
+  capSettings='Einstellungen';
   hntEdit1='Bezeichnung und/oder Seriennummer des Kopters eingeben';
   capBitBtn1='&Beenden';
   hntBitBtn1='Anwendung beenden';
