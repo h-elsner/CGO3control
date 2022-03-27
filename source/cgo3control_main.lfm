@@ -1,14 +1,14 @@
 object Form1: TForm1
-  Left = 1032
-  Height = 601
-  Top = 122
-  Width = 860
+  Left = 1145
+  Height = 607
+  Top = 108
+  Width = 750
   AllowDropFiles = True
   Anchors = [akTop, akRight]
-  ClientHeight = 601
-  ClientWidth = 860
+  ClientHeight = 607
+  ClientWidth = 750
   Constraints.MinHeight = 480
-  Constraints.MinWidth = 800
+  Constraints.MinWidth = 750
   KeyPreview = True
   OnActivate = FormActivate
   OnClose = FormClose
@@ -21,8 +21,8 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 578
-    Width = 860
+    Top = 584
+    Width = 750
     Anchors = [akRight, akBottom]
     Panels = <    
       item
@@ -40,9 +40,9 @@ object Form1: TForm1
   end
   object pcMain: TPageControl
     Left = 0
-    Height = 578
+    Height = 584
     Top = 0
-    Width = 860
+    Width = 750
     ActivePage = tabCGO3
     Align = alClient
     Images = TabImages
@@ -53,8 +53,8 @@ object Form1: TForm1
     Options = [nboKeyboardTabSwitch]
     object tabCGO3: TTabSheet
       Caption = 'CGO3'
-      ClientHeight = 550
-      ClientWidth = 852
+      ClientHeight = 556
+      ClientWidth = 742
       ImageIndex = 5
       object gbCGO3Status: TGroupBox
         Left = 8
@@ -128,20 +128,6 @@ object Form1: TForm1
             186
             145
           )
-        end
-        object indGnouMeterSDused: TindGnouMeter
-          Left = 136
-          Height = 184
-          Top = 0
-          Width = 104
-          Caption = 'SD used'
-          SignalUnit = 'GB'
-          ValueMax = 64
-          Digits = 1
-          Increment = 5
-          GapTop = 5
-          BarThickness = 20
-          MarkerColor = clBlue
         end
         object StopLightSensor1: TStopLightSensor
           Left = 92
@@ -261,14 +247,48 @@ object Form1: TForm1
           OnClick = btnFormatSDClick
           TabOrder = 1
         end
+        object prbSDcard: TProgressBar
+          Left = 142
+          Height = 144
+          Top = 8
+          Width = 32
+          Orientation = pbVertical
+          Position = 1
+          Step = 1
+          TabOrder = 4
+        end
+        object lblSDcard: TLabel
+          Left = 144
+          Height = 15
+          Top = 161
+          Width = 50
+          Caption = 'lblSDcard'
+          ParentColor = False
+        end
+        object lblSDsize: TLabel
+          Left = 184
+          Height = 15
+          Top = 8
+          Width = 15
+          Caption = 'GB'
+          ParentColor = False
+        end
+        object lblSDused: TLabel
+          Left = 184
+          Height = 15
+          Top = 137
+          Width = 24
+          Caption = '0 GB'
+          ParentColor = False
+        end
       end
       object gbVideoRecord: TGroupBox
         Left = 8
-        Height = 280
+        Height = 304
         Top = 232
         Width = 224
         Caption = 'Record'
-        ClientHeight = 260
+        ClientHeight = 284
         ClientWidth = 220
         TabOrder = 1
         object btnVideoStart: TBitBtn
@@ -506,7 +526,7 @@ object Form1: TForm1
         end
         object rgVideoFoto: TRadioGroup
           Left = 8
-          Height = 82
+          Height = 88
           Top = 136
           Width = 102
           AutoFill = True
@@ -518,7 +538,7 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 62
+          ClientHeight = 68
           ClientWidth = 98
           Enabled = False
           Items.Strings = (
@@ -592,7 +612,7 @@ object Form1: TForm1
         end
         object rgPicFormat: TRadioGroup
           Left = 120
-          Height = 82
+          Height = 88
           Top = 136
           Width = 89
           AutoFill = True
@@ -604,7 +624,7 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 62
+          ClientHeight = 68
           ClientWidth = 85
           Enabled = False
           ItemIndex = 1
@@ -618,8 +638,8 @@ object Form1: TForm1
         end
         object tbrSharpness: TTrackBar
           Left = 8
-          Height = 37
-          Top = 224
+          Height = 40
+          Top = 240
           Width = 201
           Min = 1
           Position = 6
@@ -630,11 +650,11 @@ object Form1: TForm1
       end
       object gbVideoSettings: TGroupBox
         Left = 248
-        Height = 280
+        Height = 304
         Top = 232
         Width = 368
         Caption = 'Settings'
-        ClientHeight = 260
+        ClientHeight = 284
         ClientWidth = 364
         TabOrder = 2
         object btnWiFiSpeedReset: TBitBtn
@@ -855,7 +875,7 @@ object Form1: TForm1
           Increment = 0.5
           MaxValue = 2
           MinValue = -2
-          OnChange = speExpoChange
+          OnEditingDone = speExpoEditingDone
           TabOrder = 4
         end
         object Label16: TLabel
@@ -977,126 +997,221 @@ object Form1: TForm1
           OnChange = cbExpoAutoChange
           TabOrder = 5
         end
-      end
-      object GroupBox9: TGroupBox
-        Left = 8
-        Height = 112
-        Top = 520
-        Width = 608
-        Caption = 'Test'
-        ClientHeight = 92
-        ClientWidth = 604
-        TabOrder = 3
-        object edSendCGO3: TEdit
+        object cbxLepton: TComboBox
           Left = 8
           Height = 23
-          Top = 8
-          Width = 542
-          Anchors = [akTop, akLeft, akRight]
-          OnKeyUp = edSendCGO3KeyUp
-          TabOrder = 0
-          TextHint = 'Send test command body to CGO3'
+          Top = 240
+          Width = 160
+          ItemHeight = 15
+          ItemIndex = 11
+          Items.Strings = (
+            'FUSION'
+            'RAINBOW'
+            'GLOBOW'
+            'ICE_FIRE'
+            'IRONBLACK'
+            'MAPLIN'
+            'MAPLOG'
+            'GRAYFUSION'
+            'PCOLOR'
+            'EXTRA_9'
+            'EXTRA_10'
+            ' ----'
+          )
+          OnChange = cbxLeptonChange
+          TabOrder = 11
+          Text = ' ----'
         end
-        object sbtnSendCGO3: TSpeedButton
-          Left = 550
-          Height = 40
-          Top = 0
-          Width = 36
-          Anchors = [akTop, akRight]
-          Enabled = False
-          Glyph.Data = {
-            36040000424D3604000000000000360000002800000010000000100000000100
-            2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00113D55F7285F87FB4988BDFB428DBCC12D77B322FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF002B6583FB94C7F9FF91C9F9FF4185C9FF1C64AAF32E79
-            B92FFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF004389AAFFE0F2FFFF549AD8FF1A7ABEFF4998C5FF3482
-            C1E53788D22CFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF004747476F3737
-            37F6353535FD464646FE355266FF7AB6D5FF90B7D1FF55C9E4FF5BDFF5FF78D0
-            EDFF3F8BCBFF2D3842FD2B2B2BFD2B2B2BFD2A2A2AFD2A2A2AB6575757FF6F6F
-            6FFF676767FF7A7A7AFF9B9B9BFF6F91A2FF74B7D4FFC2F6FDFF63DFF7FF5DE2
-            F8FF79D3F0FF4695D8FF6C7781FF616161FF5A5A5AFF313131FF5E5E5EFF7E7E
-            7EFF8B8B8BFFB8A595FFCE9664FFD69A60FF97937FFF77CBE7FFC7F7FDFF5EDC
-            F5FF5AE1F7FF7BD4F1FF4594D7FF405161FF646464FF333333FF606060FF8787
-            87FFB9B9B9FFD09664FFD89A61FFD89C67FFD89D67FFA4A188FF79D3EEFFC7F7
-            FDFF5FDCF5FF5BE2F7FF7AD6F2FF4192D1FF62707CFF353535FF626262FF8E8E
-            8EFFC7C7C7FFD6975EFFD79C65FFD99E69FFD9A06AFFD89D67FFA4A287FF7CD4
-            EDFFC4F6FDFF6CDDF6FF6DCAEDFF63A3D7FF5E98CBFF3B454DFF656565FF9494
-            94FFD0D0D0FFD6975EFFD99D66FFD99F6AFFD99E69FFD89B65FFD6985FFF79AA
-            B9FF7DD2EAFFB2E3F9FF8BC0E7FFAED3F6FFC4E0FCFF659CCEFF676767FF9B9B
-            9BFFD7D7D7FFD49A6AFFD69962FFD79B66FFD79C64FFD69960FFD09763FFADAD
-            ADFF487D8DFF77BEE7FFB4D2F0FFE5F3FFFFACD2EFFF4785BAFF696969FFA6A6
-            A6FFBABABAFFDAC7B7FFD49A69FFD5965EFFD5965CFFD19763FFC5B3A2FF9696
-            96FF717171FF86AFBEFF58A5D8FF85B1DBFF469DD0FF375E74FF6C6C6CFFBCBC
-            BCFFA6A6A6FFBCBCBCFFDDDDDDFFD8D8D8FFD5D5D5FFCCCCCCFFA3A3A3FF8484
-            84FF979797FFB4B4B4FF9D9D9DFF8D8D8DFF888888FF404040FF6D6D6DDBAEAE
-            AEFFD2D2D2FFB0B0B0FFA3A3A3FF9F9F9FFFB7B7B7FF989898FF9E9E9EFFC0C0
-            C0FFAAAAAAFF727272FF696969FF6A6A6AFF676767FF535353D89595950F9898
-            98FFC9C9C9FFC8C8C8FFC6C6C6FFC4C4C4FF7F939BFFA4E0F9FF41BEF3FF697C
-            85FF929393FF6D6D6D5E5C5C5CF15C5C5CFF5C5C5CFE5C5C5C35FFFFFF009898
-            9885909090C78B8B8BD0888888D1818181D6787878DC717171E16F6F6FE27676
-            76DC88888890FFFFFF00FFFFFF005C5C5C335C5C5C12FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
-          }
-          OnClick = sbtnSendCGO3Click
-        end
-        object edReceiveCGO3: TEdit
+        object lblLepton: TLabel
           Left = 8
-          Height = 23
-          Top = 48
-          Width = 578
-          Anchors = [akTop, akLeft, akRight]
-          OnDblClick = edReceiveCGO3DblClick
-          ReadOnly = True
-          TabOrder = 1
-          TextHint = 'Test result sent from CGO3'
-        end
-      end
-      object gbSettings: TGroupBox
-        Left = 632
-        Height = 112
-        Top = 8
-        Width = 216
-        Caption = 'gbSettings'
-        ClientHeight = 92
-        ClientWidth = 212
-        TabOrder = 4
-        object edCGOURL: TEdit
-          Left = 16
-          Height = 23
-          Top = 40
-          Width = 176
-          TabOrder = 0
-          Text = 'http://192.168.42.1/'
-          TextHint = 'http://192.168.42.1/'
-        end
-        object Label19: TLabel
-          Left = 16
           Height = 15
-          Top = 8
-          Width = 21
-          Caption = 'URL'
+          Top = 224
+          Width = 129
+          Caption = 'Lepton palette (CGO-ET)'
           ParentColor = False
         end
       end
+    end
+    object tsCGOtest: TTabSheet
+      Caption = 'CGO3 test'
+      ClientHeight = 560
+      ClientWidth = 740
+      ImageIndex = 4
+      object mmoResult: TMemo
+        Left = 8
+        Height = 453
+        Top = 56
+        Width = 724
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Lines.Strings = (
+          'mmoResult'
+        )
+        ScrollBars = ssAutoVertical
+        TabOrder = 0
+      end
+      object btnSendtest: TBitBtn
+        Left = 295
+        Height = 38
+        Top = 8
+        Width = 160
+        Anchors = [akTop, akRight]
+        Caption = 'btnSendtest'
+        Images = TabImages
+        ImageIndex = 10
+        OnClick = sbtnSendCGO3Click
+        TabOrder = 1
+      end
       object btnClose1: TBitBtn
-        Left = 632
-        Height = 30
-        Top = 480
+        Left = 625
+        Height = 38
+        Top = 8
         Width = 107
+        Anchors = [akTop, akRight]
         Caption = 'End'
         Images = TabImages
         ImageIndex = 27
         OnClick = btnCloseClick
-        TabOrder = 5
+        TabOrder = 2
+      end
+      object edCGOURL: TEdit
+        Left = 471
+        Height = 23
+        Top = 23
+        Width = 144
+        Anchors = [akTop, akRight]
+        TabOrder = 3
+        Text = 'http://192.168.42.1/'
+        TextHint = 'http://192.168.42.1/'
+      end
+      object lblURL: TLabel
+        Left = 473
+        Height = 15
+        Top = 8
+        Width = 45
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'URL'
+        ParentColor = False
+      end
+      object edSendCGO3: TComboBox
+        Left = 8
+        Height = 23
+        Top = 16
+        Width = 274
+        Anchors = [akTop, akLeft, akRight]
+        ItemHeight = 15
+        Items.Strings = (
+          'INDEX_PAGE'
+          ''
+          'DECOMPRESS_UPLOADED_FILE'
+          'DEL_ALL_FIRMWARE'
+          'DEL_MEDIA_FILE'
+          'DETECT_CARD'
+          'DETECT_CARD'
+          'FORMAT_CARD'
+          'GET_AE_ENABLE'
+          'GET_AUDIO_SW'
+          'GET_BATTERY_LEVEL'
+          'get_bind_state'
+          'GET_CAMERA_PKG_SOFT_VERSION'
+          'GET_CAM_MODE'
+          'GET_CAM_SCENE'
+          'GET_CAM_SCENE'
+          'GET_CARD_FORMAT'
+          'GET_DECOMPRESS_PROGESS'
+          'GET_EXPOSURE_VALUE'
+          'GET_FOV'
+          'GET_FREE_SPACE'
+          'GET_FTP_STATUS'
+          'GET_FW_VERSION'
+          'GET_IQ_TYPE'
+          'GET_LEPTON_CAMERA_SERIAL_NUM'
+          'GET_LEPTON_COMM_STATE'
+          'GET_LEPTON_FPA_T'
+          'GET_LEPTON_FRAME_NUM'
+          'GET_LEPTON_LOCK_RANGE_STATE'
+          'GET_LEPTON_PALETTE_TYPE'
+          'GET_LEPTON_SHUTDOWN_COUNT'
+          'GET_LEPTON_SYS_STATUS'
+          'GET_LEPTON_TIMING_TAKE_PHOTO_INFO'
+          'GET_LEPTON_UP_TIME'
+          'GET_METERING_MODE'
+          'GET_PANORAMA_STATUS'
+          'GET_PHOTOMODE'
+          'GET_PHOTO_FORMAT'
+          'GET_PHOTO_MODE'
+          'GET_PHOTO_SIZE'
+          'GET_REC_TIME'
+          'GET_RTSP_VID'
+          'GET_SETTING'
+          'GET_SHARPNESS'
+          'GET_SHUTTER_STATE'
+          'GET_SH_TM_ISO'
+          'GET_SPACE'
+          'GET_SPACE_FREE'
+          'GET_STATUS'
+          'GET_TIME'
+          'GET_TOTAL_SPACE'
+          'GET_UPGRADE_PROGESS'
+          'GET_VIDEO_MODE'
+          'GET_VIDEO_STANDARD'
+          'GET_WHITEBLANCE_MODE'
+          'GET_WIFI_SPEED'
+          'QUERY_SD_FIRMWARE'
+          'request_bind'
+          'RESET_DEFAULT'
+          'RESET_STATUS'
+          'REST_VF'
+          'RUN_LEP_FCC_MAINED'
+          'SET_AE_ENABLE'
+          'SET_AIR_PARAMS'
+          'SET_AUDIO_SW'
+          'SET_CAM_MODE'
+          'SET_CAM_SCENE'
+          'SET_EXPOSURE_VALUE'
+          'SET_FOV'
+          'SET_FTP_INFO'
+          'SET_IQ_TYPE'
+          'SET_LEPTON_AUTO_RUN_FCC_ENABLE'
+          'SET_LEPTON_LOCK_RANGE_STATE'
+          'SET_LEPTON_PALETTE_TYPE'
+          'SET_LEPTON_TAKE_PHOTO_TIME'
+          'SET_METERING_MODE'
+          'SET_PHOTOMODE_BURST'
+          'SET_PHOTOMODE_PANORAMA'
+          'SET_PHOTOMODE_SINGLE'
+          'SET_PHOTOMODE_TIMELAPSE'
+          'SET_PHOTO_FORMAT'
+          'SET_PHOTO_MODE'
+          'SET_PHOTO_SIZE'
+          'SET_RTSP_VID'
+          'SET_SETTING'
+          'SET_SHARPNESS'
+          'SET_SH_TM_ISO'
+          'SET_SPOT_METER_COORDS'
+          'SET_TEMP_PARAMS'
+          'SET_TIME'
+          'SET_UPDATE_FILE_TYPE'
+          'SET_VIDEO_MODE'
+          'SET_VIDEO_STANDARD'
+          'SET_WHITEBLANCE_MODE'
+          'SET_WIFI_SPEED'
+          'START_RECORD'
+          'STOP_RECORD'
+          'STOP_SHUTTER'
+          'STOP_TAKE_PHOTO'
+          'STOP_VF'
+          'TAKE_PHOTO'
+          'UPGRADE_PKG'
+        )
+        OnKeyUp = edSendCGO3KeyUp
+        TabOrder = 4
       end
     end
     object tabGeo: TTabSheet
       Caption = 'GeoTagging'
-      ClientHeight = 550
-      ClientWidth = 792
+      ClientHeight = 560
+      ClientWidth = 740
       ImageIndex = 42
       object btnScanPic: TBitBtn
         Left = 8
@@ -1111,7 +1226,7 @@ object Form1: TForm1
         TabOrder = 0
       end
       object btnWritePic: TBitBtn
-        Left = 406
+        Left = 356
         Height = 30
         Top = 88
         Width = 107
@@ -1135,9 +1250,9 @@ object Form1: TForm1
       end
       object gridEXIFPic: TStringGrid
         Left = 136
-        Height = 413
+        Height = 396
         Top = 128
-        Width = 646
+        Width = 596
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 8
         FixedCols = 0
@@ -1154,7 +1269,7 @@ object Form1: TForm1
         Left = 136
         Height = 23
         Top = 18
-        Width = 234
+        Width = 184
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 15
         OnChange = cbxPicFolderChange
@@ -1165,7 +1280,7 @@ object Form1: TForm1
         Left = 136
         Height = 23
         Top = 56
-        Width = 233
+        Width = 183
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 15
         OnChange = cbxTelemetryChange
@@ -1181,7 +1296,7 @@ object Form1: TForm1
         ParentColor = False
       end
       object sbtnPicFolder: TSpeedButton
-        Left = 370
+        Left = 320
         Height = 25
         Top = 18
         Width = 25
@@ -1191,7 +1306,7 @@ object Form1: TForm1
         OnClick = sbtnPicFolderClick
       end
       object sbtnTelemetry: TSpeedButton
-        Left = 370
+        Left = 320
         Height = 25
         Top = 54
         Width = 25
@@ -1210,7 +1325,7 @@ object Form1: TForm1
         TabOrder = 6
       end
       object gridTimeArea: TStringGrid
-        Left = 406
+        Left = 356
         Height = 70
         Top = 11
         Width = 376
@@ -1271,7 +1386,7 @@ object Form1: TForm1
         }
       end
       object btnClose: TBitBtn
-        Left = 675
+        Left = 625
         Height = 30
         Top = 88
         Width = 107
@@ -1287,15 +1402,15 @@ object Form1: TForm1
   object XMLPropStorage1: TXMLPropStorage
     StoredValues = <>
     Left = 664
-    Top = 488
+    Top = 496
   end
   object SaveDialog1: TSaveDialog
-    Left = 560
+    Left = 568
     Top = 496
   end
   object OpenDialog1: TOpenDialog
     Left = 568
-    Top = 368
+    Top = 360
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
     Left = 664
@@ -1303,13 +1418,12 @@ object Form1: TForm1
   end
   object tmCGOstatus: TTimer
     Enabled = False
-    Interval = 500
     OnTimer = tmCGOstatusTimer
-    Left = 504
-    Top = 376
+    Left = 568
+    Top = 304
   end
   object TabImages: TImageList
-    Left = 576
+    Left = 568
     Top = 432
     Bitmap = {
       4C69300000001000000010000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -2853,7 +2967,7 @@ object Form1: TForm1
   end
   object PopupMenuGeo: TPopupMenu
     Images = TabImages
-    Left = 656
+    Left = 664
     Top = 432
     object mnShowPic: TMenuItem
       Caption = 'mnShowPic'

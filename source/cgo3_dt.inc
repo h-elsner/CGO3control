@@ -43,9 +43,6 @@ resourcestring                                     {deutsch}
   capColorButton1='Farbe';
   capLabel4='Sättigung';
   rsNoArch='Nichts da zum Archivieren';
-  capCrossHairOn ='Kursor ein';
-  capCrossHairOff='Kursor aus';
-  hntCrossHair='Kursor zur Datenanalyse';
   capGoToZNr='Gehe zum Datenpunkt';
   capGoToVal='Gehe zum Wert';
   capTabSheet10='Datenanalyse';
@@ -131,6 +128,7 @@ resourcestring                                     {deutsch}
   capHelp='&Hilfe';
   capInfo='Über Q500log2kml';
   rsTimeout='Timeout! Keine WLAN Verbindung zur CGO3';
+  rsConnError='Fehler bei WLAN Verbindungsaufbau';
   rsCGO3URL='CGO3 Standard URL';
   hntCGO3URL='CGO3 URL mit abschließenden Schrägstrich eingeben';
   hntStatus='CGO3 initialisieren und Statusabfrage';
@@ -140,6 +138,7 @@ resourcestring                                     {deutsch}
   hntStringGrid3='Statusausgabe CGO3';
   rsVideo='Video Auflösung';
   rsSharpness='JPG Schärfe';
+  hntLepton='Select Lepton palette for CGO-ET';
   hntSharpness='Schärfe für JPG Bilder einstellen';
   rsWLANSpeed='WLAN Übertragungsrate';
   rsKStatus='Kamera Status';
@@ -158,6 +157,7 @@ resourcestring                                     {deutsch}
   hntRec='Kamera Aufnahmestatus';
   errNoPossbl='Ungültiger Befehl';
   hntSpeed6='Sende Testbefehl zur CGO3';
+  capSpeed6='Senden';
   hntEdit3='Pures CGO3 Kommando eingeben, Beispiel: SET_AUDIO_SW&mode=0';
   hntEdit4='Rückgabewert von der CGO3';
   rsCGOstat='Status CGO3';

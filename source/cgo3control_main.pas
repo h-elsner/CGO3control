@@ -45,7 +45,7 @@ uses
   Classes, SysUtils, FileUtil, LCLType,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
   Buttons, EditBtn, XMLPropStorage, Grids, Menus, lclintf, StdCtrls, Spin,
-  Clipbrd, indGnouMeter, AdvLed, Sensors, fphttpclient, lazUTF8,
+  Clipbrd, AdvLed, Sensors, fphttpclient, lazUTF8,
   strutils, dateutils, c3_common, fpeMetaData, fpeExifData, exifstuff;
 
 type
@@ -54,12 +54,13 @@ type
 
   TForm1 = class(TForm)
     AdvLed1: TAdvLed;
+    btnClose1: TBitBtn;
+    btnSendtest: TBitBtn;
     btnAudio: TBitBtn;
     btnCGO3Reset: TBitBtn;
     btnCGO3Status: TBitBtn;
     btnCGO3Time: TBitBtn;
     btnClose: TBitBtn;
-    btnClose1: TBitBtn;
     btnFormatSD: TBitBtn;
     btnFoto: TBitBtn;
     btnScanPic: TBitBtn;
@@ -80,24 +81,24 @@ type
     cbxPicFolder: TComboBox;
     cbxTelemetry: TComboBox;
     cgpCamera: TCheckGroup;
+    cbxLepton: TComboBox;
+    edSendCGO3: TComboBox;
     edCGOURL: TEdit;
-    edReceiveCGO3: TEdit;
-    edSendCGO3: TEdit;
     gbCGO3Status: TGroupBox;
     gbVideoRecord: TGroupBox;
     gbVideoSettings: TGroupBox;
     gridCGO3: TStringGrid;
     gridEXIFPic: TStringGrid;
     gridTimeArea: TStringGrid;
-    gbSettings: TGroupBox;
-    GroupBox9: TGroupBox;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    indGnouMeterSDused: TindGnouMeter;
+    lblLepton: TLabel;
+    lblSDused: TLabel;
+    lblSDsize: TLabel;
+    lblSDcard: TLabel;
     Label16: TLabel;
     Label18: TLabel;
-    Label19: TLabel;
     Label20: TLabel;
     Label21: TLabel;
     Label22: TLabel;
@@ -107,16 +108,18 @@ type
     lblPicFolder: TLabel;
     lblTelemetry: TLabel;
     lblTimeOffset: TLabel;
+    lblURL: TLabel;
+    mmoResult: TMemo;
     N1: TMenuItem;
     mnGeoGMap: TMenuItem;
     mnGeoOSM: TMenuItem;
     mnShowPic: TMenuItem;
     pcMain: TPageControl;
     PopupMenuGeo: TPopupMenu;
+    prbSDcard: TProgressBar;
     rgPicFormat: TRadioGroup;
     rgVideoFoto: TRadioGroup;
     sbtnPicFolder: TSpeedButton;
-    sbtnSendCGO3: TSpeedButton;
     sbtnTelemetry: TSpeedButton;
     speExpo: TFloatSpinEdit;
     speTimeOffset: TSpinEdit;
@@ -128,6 +131,7 @@ type
     SaveDialog1: TSaveDialog;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     StatusBar1: TStatusBar;
+    tsCGOtest: TTabSheet;
     tbrSharpness: TTrackBar;
     tmCGOstatus: TTimer;                                {CGO3 Statusabfrage}
     XMLPropStorage1: TXMLPropStorage;
@@ -145,6 +149,7 @@ type
     procedure btnCGO3TimeClick(Sender: TObject);
     procedure btnFormatSDClick(Sender: TObject);
     procedure btnWritePicClick(Sender: TObject);
+    procedure cbxLeptonChange(Sender: TObject);
     procedure cbxPicFolderChange(Sender: TObject);
     procedure cbxPicFolderDblClick(Sender: TObject);
     procedure cbxTelemetryChange(Sender: TObject);
@@ -168,12 +173,12 @@ type
     procedure mnShowPicClick(Sender: TObject);
     procedure sbtnPicFolderClick(Sender: TObject);
     procedure sbtnTelemetryClick(Sender: TObject);
-    procedure speExpoChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure rgVideoFotoClick(Sender: TObject);
     procedure rgPicFormatClick(Sender: TObject);
     procedure sbtnSendCGO3Click(Sender: TObject);
+    procedure speExpoEditingDone(Sender: TObject);
     procedure StatusBar1DblClick(Sender: TObject);
     procedure StatusBar1Hint(Sender: TObject);
     procedure gridCGO3KeyUp(Sender: TObject; var Key: Word;
@@ -182,7 +187,8 @@ type
     procedure tbrSharpnessClick(Sender: TObject);
 
   private
-    function CGO3run(const CGO3cmd: string; const CGO3act: integer): integer; {CGO3 ansprechen}
+    function CGO3run(const CGO3cmd: string; const CGO3act: integer = 0): integer; {CGO3 ansprechen}
+    function CGOstat: integer;
     procedure StatusToClipboard;                   {Statuszeile kopieren}
     function ZeitToDT(const s: string): TDateTime;
     function FindTP(wlist: TStringList; tp: TDateTime): integer;
@@ -191,21 +197,16 @@ type
     procedure GeoShowPic;                          {Menu Show picture}
     procedure ScanPicEnable;                       {Enable picture scanning for geotagging}
     procedure ScanPic;                             {Geotagging: Scan picture folder}
+    procedure ResultOK;
+    procedure FillValues(rval: string);
 
   end;
 
 
 const
-  hpmydat='/pdf/';
-  meinname='Helmut Elsner';
-  email   ='helmut.elsner@live.com';               {My e-mail address}
-
-  {http://docwiki.embarcadero.com/RADStudio/Seattle/de/Farben_in_der_VCL}
   osmURL='https://www.openstreetmap.org/';         {als Karte}
-
   numItems=10;                                     {Anzahl Items zu merken in drop-down list}
   gzoom='16';
-
   wldcd='*';
   us1='_1';
   pngdef=us1+'.png';                               {Dateivorschläge}
@@ -223,6 +224,7 @@ const
 
 var
   Form1: TForm1;
+  httpc: TFPHttpClient;
 
 implementation
 
@@ -245,6 +247,8 @@ begin
   Hint:=capForm1;
   btnClose.Caption:=capBitBtn1;
   btnClose.Hint:=hntBitBtn1;
+  btnClose1.Caption:=capBitBtn1;
+  btnClose1.Hint:=hntBitBtn1;
   btnCGO3Reset.Caption:=capBitBtn18;
   btnCGO3Reset.Hint:=hntBitBtn18;
   btnCGO3Time.Caption:=capBitBtn23;
@@ -281,8 +285,6 @@ begin
   gbVideoRecord.Hint:=capGroupBox7;
   gbVideoSettings.Caption:=capCameraSettings;
   gbVideoSettings.Hint:=hntCameraSettings;
-  GroupBox9.Caption:=capGroupBox9;
-  GroupBox9.Hint:=hntEdit3;
   Tag:=ord(DefaultFormatSettings.DecimalSeparator); {Original zwischenspeichern}
   DefaultFormatSettings.DecimalSeparator:='.';
   AdvLed1.State:=lsDisabled;
@@ -290,8 +292,7 @@ begin
   Image2.Hint:=rsVdo;
   Image3.Hint:=capBitBtn22;
   edCGOURL.Hint:=hntCGO3URL;
-  Label19.Hint:=hntCGO3URL;
-  Label19.Caption:=rsCGO3URL;
+  lblURL.Hint:=hntCGO3URL;
   Label16.Caption:=rsExpo;
   Label16.Hint:=rsExpo;
   speExpo.Hint:=rsExpo;
@@ -308,8 +309,8 @@ begin
   Label23.Hint:=rsFarbFormat;
   cbxCGO3Color.Text:=rsFarbFormat;
   cbxCGO3Color.Hint:=rsFarbFormat;
-  indGnouMeterSDused.Caption:=capGnou;             {SD card usage}
-  indGnouMeterSDused.Hint:=hntGnou;
+  lblSDcard.Caption:=capGnou;             {SD card usage}
+  prbSDcard.Hint:=hntGnou;
   gridCGO3.Hint:=hntStringGrid3;
   gridCGO3.Cells[0,0]:='Firmware';
   gridCGO3.Cells[0,1]:=rsWLANSpeed;
@@ -328,12 +329,12 @@ begin
   btnFoto.Caption:=capBitBtn22;
   btnFoto.Hint:=hntBitBtn22;
   Image1.Hint:=btnAudio.Caption;
-  sbtnSendCGO3.Hint:=hntSpeed6;
+  btnSendtest.Hint:=hntSpeed6;
+  btnSendTest.Caption:=capSpeed6;
+  btnSendTest.Enabled:=false;
   edSendCGO3.Hint:=hntEdit3;
-  edReceiveCGO3.Hint:=hntEdit4;
-  edSendCGO3.TextHint:=hntEdit3;
-  edReceiveCGO3.TextHint:=hntEdit4;
-  gbSettings.Caption:=capSettings;
+  mmoResult.Hint:=hntEdit4;
+  mmoResult.Lines.Clear;
 
 {GeoTagging}
   lblPicFolder.Caption:=capPicFolder;
@@ -374,8 +375,7 @@ begin
 end;
 
 {Zeitstempel to TDateTime; Format abhängig vom Vehicle Type
- legacy Yuneec: 20151206 11:32:57:234
- }
+ legacy Yuneec: 20151206 11:32:57:234 }
 function TForm1.ZeitToDT(const s: string): TDateTime;
 begin
   try
@@ -408,8 +408,7 @@ end;
  https://www.google.de/maps?q=48.235367,10.0922553&z=13&om=0
 
 Mit Beschriftung:
-https://www.google.de/maps/place/Weihers+17,+88161+Lindenberg/@47.6087465,9.9204697,17z
-}
+https://www.google.de/maps/place/Weihers+17,+88161+Lindenberg/@47.6087465,9.9204697,17z}
 
 function URLGMap(lati, long: string): string;      {URL für Koordinate in Google Maps}
 begin
@@ -438,7 +437,7 @@ begin
   ScanPicEnable;
 end;
 
-procedure TForm1.ScanPicEnable;
+procedure TForm1.ScanPicEnable;                    {Enable scan actions}
 begin
   if DirectoryExists(cbxPicFolder.Text) and
      FileExists(cbxTelemetry.Text) then
@@ -495,9 +494,140 @@ var ff: string;
 
 begin
   CGO3run(getshpn, 0);                             {SHARPNESS abfragen}
-  ff:=GetCGOStr('sharpness', edReceiveCGO3.Text);  {Sharpness nur aus GET_SHARPNESS}
+  ff:=GetCGOStr('sharpness', mmoResult.Text);      {Sharpness nur aus GET_SHARPNESS}
   gridCGO3.Cells[1, 7]:=ff;                        {in Tabelle eintragen}
   tbrSharpness.Position:=StrToIntDef(ff, 6);       {Anzeige setzen}
+end;
+
+procedure TForm1.ResultOK;                         {Stellt alles ein, wenn WiFi gefundenwurde}
+begin
+  btnSendTest.Enabled:=true;
+  btnVideoStart.Enabled:=true; {Kommandos nur nach erfolgreicher Intialisierung}
+  btnVideoStop.Enabled:=true;
+  btnCGO3Reset.Enabled:=true;
+  btnWiFiSpeedUp.Enabled:=true;
+  btnWiFiSpeedReset.Enabled:=true;
+  btnAudio.Enabled:=true;
+  btnFoto.Enabled:=true;
+  btnCGO3Time.Enabled:=true;
+  btnFormatSD.Enabled:=true;
+  rgVideoFoto.Enabled:=true;
+  rgPicFormat.Enabled:=true;
+  btnSendTest.Enabled:=true;
+  StopLightSensor1.State:=slGREEN;         {WLAN Ampel auf Grün}
+  StatusBar1.Panels[2].Text:=rsCGOdone+tab1+edCGOURL.Text;
+end;
+
+procedure TForm1.FillValues(rval: string);
+var
+  sdsize, w: integer;
+  ff, s: string;
+
+begin
+  s:=StringReplace(rval, '}', sep, [rfReplaceAll]);
+  sdsize:=StrToIntDef(GetCGOStr('sdtotal', s), 0);    {SD-Karte abfragen}
+  prbSDcard.Max:=sdsize;
+  lblSDsize.Caption:=IntToStr(sdsize div 1048576)+' GB';
+  sdsize:=sdsize-StrToIntDef(GetCGOStr('sdfree', s), 0);
+  prbSDcard.Position:=sdsize;
+  lblSDused.Caption:=IntToStr(sdsize div 1048576)+' GB';
+
+  cbxCGO3Video.Text:=GetCGOStr('video_mode', s);
+  try
+    w:=StrToInt(GetCGOStr('iq_type', s));
+    cbxCGO3Color.Text:=cbxCGO3Color.Items[w];
+  except
+    cbxCGO3Color.Text:='';
+  end;
+  try
+    w:=StrToInt(GetCGOStr('white_balance', s));
+    case w of
+      0: cbxCGO3WB.Text:=cbxCGO3WB.Items[0];
+      1: cbxCGO3WB.Text:=cbxCGO3WB.Items[5];
+      3: cbxCGO3WB.Text:=cbxCGO3WB.Items[6]; {Sunset}
+      4: cbxCGO3WB.Text:=cbxCGO3WB.Items[2]; {Sunny}
+      5: cbxCGO3WB.Text:=cbxCGO3WB.Items[3];
+      7: cbxCGO3WB.Text:=cbxCGO3WB.Items[4];
+     99: cbxCGO3WB.Text:=cbxCGO3WB.Items[1]; {Lock}
+    end;
+    If cbxCGO3WB.Text='Auto' then
+      Label21.Caption:=rsWB+' (AWB)'
+    else
+      Label21.Caption:=rsWB;
+  except
+    cbxCGO3WB.Text:='';
+  end;
+  gridCGO3.Cells[1, 0]:=GetCGOStr('fw_ver', s);
+  gridCGO3.Cells[1, 1]:=GetCGOStr('speed_rate', s);
+  gridCGO3.Cells[1, 2]:=GetCGOStr('status', s);
+  gridCGO3.Cells[1, 3]:=GetCGOStr('record_time', s);
+  gridCGO3.Cells[1, 4]:=GetCGOStr('awb_lock', s);
+  gridCGO3.Cells[1, 5]:=GetCGOStr('ae_enable', s);
+  cbxCGO3ISO.Text:=GetCGOStr('iso_value', s);
+  ff:=GetCGOStr('shutter_time', s);
+  gridCGO3.Cells[1, 6]:='1/'+ff;
+  cbxCGO3Shutter.Text:=ff;
+  ff:=GetCGOStr('photo_format', s);
+  Label20.Caption:=ff;
+
+  w:=-1;
+  if (ff='dng') or (ff='raw') then begin
+    w:=0;
+    tbrSharpness.Enabled:=false;           {Sharpness for jpg}
+  end;
+  if ff='jpg' then begin
+    w:=1;
+    tbrSharpness.Enabled:=true;            {Sharpness for jpg}
+  end;
+
+  if ff='dng+jpg' then begin               {nur für CGO3+}
+    w:=2;
+    tbrSharpness.Enabled:=true;            {Sharpness for jpg}
+  end;
+
+  rgPicFormat.ItemIndex:=w;
+  cbExpoAuto.Checked:=(GetCGOStr('ae_enable', s)='1');
+  speExpo.Enabled:=cbExpoAuto.Checked;
+  cbxCGO3ISO.Enabled:=not cbExpoAuto.Checked;
+  cbxCGO3Shutter.Enabled:=cbxCGO3ISO.Enabled;
+  try
+    speExpo.Value:=StrToFloat(GetCGOStr('exposure_value', s));
+  except
+    speExpo.Value:=0;
+  end;
+
+  try                                     {Only for CGO_ET}
+    w:=StrToIntDef(GetCGOStr('palette_type', s), 11);
+    if w<11 then
+      cbxLepton.ItemIndex:=w;
+  except
+    cbxLepton.ItemIndex:=11;
+  end;
+
+  if GetCGOStr('cam_mode', s)='2' then begin
+    Image2.Visible:=false;                 {Filmbildchen}
+    Image3.Visible:=true;                  {Kamerabildchen}
+  end else begin
+    Image2.Visible:=true;
+    Image3.Visible:=false;
+  end;
+
+  btnAudio.Tag:=0;
+  if GetCGOStr('audio_sw', s)='0' then begin
+    btnAudio.Tag:=1;
+    Image1.Visible:=true;
+  end else
+    Image1.Visible:=false;
+
+  if pos('"record"', s)>0 then begin
+    AdvLed1.State:=lsOn;                   {record läuft}
+    AdvLed1.Blink:=true;
+    tmCGOstatus.Enabled:=true;     {Wartezeit für Stoppen der Aufnahme}
+  end else begin
+    AdvLed1.State:=lsOff;
+    AdvLed1.Blink:=false;
+    if tmCGOstatus.Tag=1 then tmCGOstatus.Enabled:=false;
+  end;
 end;
 
 {Ausführen eines CGI-Kommandos für die CGO3(+). Wenn CGO3cmd leer ist, wird
@@ -509,140 +639,38 @@ end;
              nur bei Set Speed.
           2..CheckBox5 abfragen und ggf. RTSP-Stream an Browser senden,
              nur bei Start Video.
-          3..INDEX_PAGE mit Ausgabe an AppLogHighlighter, nur beim Start Button. }
+          3..INDEX_PAGE mit Ausgabe an das Protokoll, nur beim Start Button. }
 
-function TForm1.CGO3run(const CGO3cmd: string; const CGO3act: integer): integer;
-Var s, ff: string;
-    sdsize, w: integer;
+function TForm1.CGO3run(const CGO3cmd: string; const CGO3act: integer = 0): integer;
+var
+  s: RawByteString;
 
 begin
   Image1.Visible:=false;
   Image2.Visible:=false;
   Image3.Visible:=false;
-  if not tmCGOstatus.Enabled then Screen.Cursor:=crHourGlass;
-  with TFPHttpClient.Create(Nil) do try
-    IOTimeout:=6000;                               {Timeout if cam disconnected}
+  btnSendTest.Enabled:=false;
+  if not tmCGOstatus.Enabled then
+    Screen.Cursor:=crHourGlass;
+  try
     try
       if CGO3cmd<>'' then begin                    {opt. Kommando ausführen}
-        s:=Get(edCGOURL.Text+CGO3cgi+CGO3cmd);
+        s:=httpc.Get(edCGOURL.Text+CGO3cgi+CGO3cmd);
         result:=StrToIntDef(GetCGOStr('rval', s), -1); {Returnwert überschreiben}
-        StatusBar1.Panels[2].Text:=s;
-        edReceiveCGO3.Text:=s;                     {Ergebnis unten anzeigen}
+        StatusBar1.Panels[2].Text:=s;              {Ergebnis unten anzeigen}
+        mmoResult.Lines.Add('');
+        mmoResult.Lines.Add(cgo3cmd+': '+s);       {Ergebnis protkollieren}
       end else begin                               {Initialisierung und Werte ausgeben}
-        s:=Get(edCGOURL.Text+CGO3cgi+idxpage);
-        s:=StringReplace(s, '}', sep, [rfReplaceAll]);
+        s:=httpc.Get(edCGOURL.Text+CGO3cgi+idxpage);
         result:=StrToIntDef(GetCGOStr('rval', s), -1);        {Returnwert Init}
-
+        if CGO3act=3 then
+          mmoResult.Text:=s;                       {Protokollieren}
         if result=0 then begin                     {Werte abfragen und anzeigen}
-          sdsize:=StrToIntDef(GetCGOStr('sdtotal', s), 0);    {sdtotal abfragen}
-          indGnouMeterSDused.ValueMax:=sdsize/1048576;
-          indGnouMeterSDused.Value:=(sdsize-StrToIntDef(GetCGOStr('sdfree', s), 0))/1048576;
-          cbxCGO3Video.Text:=GetCGOStr('video_mode', s);
-          try
-            w:=StrToInt(GetCGOStr('iq_type', s));
-            cbxCGO3Color.Text:=cbxCGO3Color.Items[w];
-          except
-            cbxCGO3Color.Text:='';
-          end;
-          try
-            w:=StrToInt(GetCGOStr('white_balance', s));
-            case w of
-              0: cbxCGO3WB.Text:=cbxCGO3WB.Items[0];
-              1: cbxCGO3WB.Text:=cbxCGO3WB.Items[5];
-              3: cbxCGO3WB.Text:=cbxCGO3WB.Items[6]; {Sunset}
-              4: cbxCGO3WB.Text:=cbxCGO3WB.Items[2]; {Sunny}
-              5: cbxCGO3WB.Text:=cbxCGO3WB.Items[3];
-              7: cbxCGO3WB.Text:=cbxCGO3WB.Items[4];
-             99: cbxCGO3WB.Text:=cbxCGO3WB.Items[1]; {Lock}
-            end;
-            If cbxCGO3WB.Text='Auto' then
-              Label21.Caption:=rsWB+' (AWB)'
-            else
-              Label21.Caption:=rsWB;
-          except
-            cbxCGO3WB.Text:='';
-          end;
-          gridCGO3.Cells[1, 0]:=GetCGOStr('fw_ver', s);
-          gridCGO3.Cells[1, 1]:=GetCGOStr('speed_rate', s);
-          gridCGO3.Cells[1, 2]:=GetCGOStr('status', s);
-          gridCGO3.Cells[1, 3]:=GetCGOStr('record_time', s);
-          gridCGO3.Cells[1, 4]:=GetCGOStr('awb_lock', s);;
-          gridCGO3.Cells[1, 5]:=GetCGOStr('ae_enable', s);;
-          cbxCGO3ISO.Text:=GetCGOStr('iso_value', s);
-          ff:=GetCGOStr('shutter_time', s);
-          gridCGO3.Cells[1, 6]:='1/'+ff;
-          cbxCGO3Shutter.Text:=ff;
-          ff:=GetCGOStr('photo_format', s);
-          Label20.Caption:=ff;
-
-          w:=-1;
-          if (ff='dng') or (ff='raw') then begin
-            w:=0;
-            tbrSharpness.Enabled:=false;           {Sharpness for jpg}
-          end;
-          if ff='jpg' then begin
-            w:=1;
-            tbrSharpness.Enabled:=true;            {Sharpness for jpg}
-          end;
-
-          if ff='dng+jpg' then begin               {nur für CGO3+}
-            w:=2;
-            tbrSharpness.Enabled:=true;            {Sharpness for jpg}
-          end;
-
-          rgPicFormat.ItemIndex:=w;
-          cbExpoAuto.Checked:=(GetCGOStr('ae_enable', s)='1');
-          speExpo.Enabled:=cbExpoAuto.Checked;
-          cbxCGO3ISO.Enabled:=not cbExpoAuto.Checked;
-          cbxCGO3Shutter.Enabled:=cbxCGO3ISO.Enabled;
-          try
-            speExpo.Value:=StrToFloat(GetCGOStr('exposure_value', s));
-          except
-            speExpo.Value:=0;
-          end;
-
-          if GetCGOStr('cam_mode', s)='2' then begin
-            Image2.Visible:=false;                 {Filmbildchen}
-            Image3.Visible:=true;                  {Kamerabildchen}
-          end else begin
-            Image2.Visible:=true;
-            Image3.Visible:=false;
-          end;
-
-          btnAudio.Tag:=0;
-          if GetCGOStr('audio_sw', s)='0' then begin
-            btnAudio.Tag:=1;
-            Image1.Visible:=true;
-          end else
-            Image1.Visible:=false;
-
-          if pos('"record"', s)>0 then begin
-            AdvLed1.State:=lsOn;                   {record läuft}
-            AdvLed1.Blink:=true;
-            tmCGOstatus.Enabled:=true;     {Wartezeit für Stoppen der Aufnahme}
-          end else begin
-            AdvLed1.State:=lsOff;
-            AdvLed1.Blink:=false;
-            if tmCGOstatus.Tag=1 then tmCGOstatus.Enabled:=false;
-          end;
-
-          btnVideoStart.Enabled:=true; {Kommandos nur nach erfolgreicher Intialisierung}
-          btnVideoStop.Enabled:=true;
-          btnCGO3Reset.Enabled:=true;
-          btnWiFiSpeedUp.Enabled:=true;
-          btnWiFiSpeedReset.Enabled:=true;
-          btnAudio.Enabled:=true;
-          btnFoto.Enabled:=true;
-          btnCGO3Time.Enabled:=true;
-          btnFormatSD.Enabled:=true;
-          rgVideoFoto.Enabled:=true;
-          rgPicFormat.Enabled:=true;
-          sbtnSendCGO3.Enabled:=true;
-          StopLightSensor1.State:=slGREEN;         {WLAN Ampel auf Grün}
-          StatusBar1.Panels[2].Text:=rsCGOdone+tab1+edCGOURL.Text;
+          FillValues(s);
+          ResultOK;
         end else begin                             {Result <> 0}
-          indGnouMeterSDused.ValueMax:=64;
-          indGnouMeterSDused.Value:=0;
+          prbSDcard.Max:=64;
+          prbSDcard.Position:=0;
           StopLightSensor1.State:=slRED;
           StatusBar1.Panels[2].Text:=s;
         end;
@@ -653,14 +681,60 @@ begin
         2: If cbRTSP.Checked then                  {Livestream anzeigen}
              OpenURL(StringReplace(edCGOURL.Text, 'http', 'rtsp',[rfIgnoreCase])+'live');
       end;
+      if result<>0 then begin
+        StopLightSensor1.State:=slRED;
+        btnCGO3Time.Enabled:=false;
+        btnSendTest.Enabled:=false;
+      end;
+      Image1.Refresh;
+      Image2.Refresh;
+      Image3.Refresh;
     except
-      StatusBar1.Panels[2].Text:=rsTimeOut;
+      StatusBar1.Panels[2].Text:=rsConnError;
       result:=-1;                                  {Fehler, Timeout}
       StopLightSensor1.State:=slRED;
+      btnSendTest.Enabled:=false;
+      btnCGO3Time.Enabled:=false;
     end;
   finally
     Screen.Cursor:=crDefault;
-    Free;
+  end;
+end;
+
+function TForm1.CGOstat: integer;
+var
+  s: RawByteString;
+
+begin
+  if not tmCGOstatus.Enabled then
+    Screen.Cursor:=crHourGlass;
+  try
+    try
+      s:=httpc.Get(edCGOURL.Text+CGO3cgi+getstatus);
+      result:=StrToIntDef(GetCGOStr('rval', s), -1);        {Returnwert Init}
+      if result=0 then begin                     {Werte abfragen und anzeigen}
+        FillValues(s);
+        ResultOK;
+      end else begin                             {Result <> 0}
+        prbSDcard.Max:=64;
+        prbSDcard.Position:=0;
+        StopLightSensor1.State:=slRED;
+        StatusBar1.Panels[2].Text:=s;
+      end;
+      if result<>0 then begin
+        StopLightSensor1.State:=slRED;
+        btnCGO3Time.Enabled:=false;
+        btnSendTest.Enabled:=false;
+      end;
+    except
+      StatusBar1.Panels[2].Text:=rsConnError;
+      result:=-1;                                  {Fehler, Timeout}
+      StopLightSensor1.State:=slRED;
+      btnCGO3Time.Enabled:=false;
+      btnSendTest.Enabled:=false;
+    end;
+  finally
+    Screen.Cursor:=crDefault;
   end;
 end;
 
@@ -670,6 +744,11 @@ begin
   StatusBar1.Update;
   StopLightSensor1.State:=slYELLOW;
   StopLightSensor1.Update;
+  mmoResult.Lines.Clear;
+  httpc:=TFPHttpClient.Create(nil);
+  httpc.KeepConnection:=true;
+  httpc.IOTimeout:=2000;                           {Timeout if cam is disconnected}
+
   if CGO3run('', 3)=0 then begin                   {CGO3act=3 mit Protokollausgabe}
     AdvLed1.Visible:=true;                         {nur bei Initialisieren}
     CGO3run('GET_FW_VERSION', 0);                  {FW abfragen}
@@ -696,26 +775,25 @@ end;
 procedure TForm1.btnCGO3ResetClick(Sender: TObject);   {Reset default}
 begin
   CGO3run('RESET_DEFAULT', 0);
-  CGO3run('', 0);
+  CGOstat;
 end;
 
 procedure TForm1.btnWiFiSpeedUpClick(Sender: TObject);   {Set speed}
 begin
   CGO3run('SET_WIFI_SPEED&speed_rate=9', 1);       {CGO3act=2 Dateianzeige abfragen}
-  CGO3run('', 0);                                  {INDEX_PAGE aufrufen}
+  CGOstat;
 end;
 
 procedure TForm1.btnWiFiSpeedResetClick(Sender: TObject);
 begin
   CGO3run('SET_WIFI_SPEED&speed_rate=1', 0);       {reset Speed}
-  CGO3run('', 0);
+  CGOstat;
 end;
 
 procedure TForm1.cbxCGO3VideoChange(Sender: TObject); {Videoformat setzen}
 begin
   if btnCGO3Time.Enabled then begin
     CGO3run('SET_VIDEO_MODE&mode='+cbxCGO3Video.Text, 0);
-    CGO3run('', 0);
   end;
 end;
 
@@ -723,7 +801,6 @@ procedure TForm1.cbxCGO3ColorChange(Sender: TObject); {IQ Type}
 begin
   if btnCGO3Time.Enabled then begin
     CGO3run('SET_IQ_TYPE&mode='+IntToStr(cbxCGO3Color.ItemIndex), 0);
-    CGO3run('', 0);                                {INDEX_PAGE abfragen}
   end;
 end;
 
@@ -750,7 +827,6 @@ begin
       6: s:='3';
     end;
     CGO3run('SET_WHITEBLANCE_MODE&mode='+s, 0);    {seltsames Kommando}
-    CGO3run('', 0);
   end;
 end;
 
@@ -759,7 +835,6 @@ begin
   if btnCGO3Time.Enabled then begin
     CGO3run('SET_SH_TM_ISO&time='+cbxCGO3Shutter.Text+'&value='+cbxCGO3ISO.Text, 0);
     Sleep(500);
-    CGO3run('', 0);
   end;
 end;
 
@@ -767,14 +842,13 @@ procedure TForm1.cbxCGO3ShutterChange(Sender: TObject); {Shutter}
 begin
   if btnCGO3Time.Enabled then begin
     CGO3run('SET_SH_TM_ISO&time='+cbxCGO3Shutter.Text+'&value='+cbxCGO3ISO.Text, 0);
-    CGO3run('', 0);
   end;
 end;
 
 procedure TForm1.edSendCGO3KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
                                                    {Kommando absenden bei Enter}
 begin
-  if sbtnSendCGO3.Enabled and
+  if btnSendTest.Enabled and
      (key=VK_RETURN) then
     SendCGOcmd;                                    {Command zu CGO3}
   if key=VK_ESCAPE then
@@ -787,12 +861,11 @@ begin
     CGO3run('SET_AUDIO_SW&mode=1', 0)              {reset Audio}
   else
     CGO3run('SET_AUDIO_SW&mode=0', 0);             {set Audio}
-  CGO3run('', 0);
 end;
 
 procedure TForm1.btnFotoClick(Sender: TObject);
 begin
-  CGO3run('TAKE_PHOTO', 0);                        {Photo shot}
+  CGO3run('TAKE_PHOTO', 0);                           {Photo shot}
 end;
 
 procedure TForm1.btnCGO3TimeClick(Sender: TObject);   {Kamera Zeit setzen}
@@ -804,19 +877,19 @@ procedure TForm1.btnFormatSDClick(Sender: TObject);   {SD-Karte formatieren}
 begin
   CGO3run('FORMAT_CARD', 0);
   Sleep(2000);
-  CGO3run('', 0);
 end;
 
 
 procedure TForm1.rgVideoFotoClick(Sender: TObject); {Cam mode}
 begin
   if rgVideoFoto.Enabled then begin
+    Screen.Cursor:=crHourGlass;
     if rgVideoFoto.ItemIndex=0 then
       CGO3run('SET_CAM_MODE&mode=video', 0)
     else
       CGO3run('SET_CAM_MODE&mode=photo', 0);
     Sleep(800);
-    CGO3run('', 0);
+    Screen.Cursor:=crDefault;
   end;
 end;
 
@@ -830,7 +903,6 @@ begin
     else
       s:='0';
     CGO3run('SET_AE_ENABLE&mode='+s, 0);
-    CGO3run('', 0);
   end;
 end;
 
@@ -839,17 +911,21 @@ begin
   if (rgPicFormat.Enabled) and
      (rgPicFormat.ItemIndex>=0) then begin
     CGO3run('SET_PHOTO_FORMAT&format='+rgPicFormat.Items[rgPicFormat.ItemIndex], 0);
-    CGO3run('', 0);
   end;
 end;
 
+procedure TForm1.cbxLeptonChange(Sender: TObject);        {Set Lepton palette}
+begin
+  if cbxLepton.ItemIndex<11 then begin
+    CGO3run('SET_LEPTON_PALETTE_TYPE&val='+IntToStr(cbxLepton.ItemIndex), 0);
+  end;
+end;
 
-procedure TForm1.speExpoChange(Sender: TObject);  {Set EV}
+procedure TForm1.speExpoEditingDone(Sender: TObject);
 begin
   if btnCGO3Time.Enabled then begin
     CGO3run('SET_EXPOSURE_VALUE&mode='+
             FormatFloat(dzfl, speExpo.Value), 0);
-    CGO3run('', 0);
   end;
 end;
 
@@ -1140,8 +1216,8 @@ end;
 
 procedure TForm1.edReceiveCGO3DblClick(Sender: TObject);  {CGO3 Test Copy to Clipboard}
 begin
-  If edReceiveCGO3.Text>'' then
-    ClipBoard.AsText:=edSendCGO3.Text+LineEnding+edReceiveCGO3.Text;
+  If mmoResult.Text<>'' then
+    ClipBoard.AsText:=edSendCGO3.Text+LineEnding+mmoResult.Text;
 end;
 
 procedure TForm1.FormActivate(Sender: TObject);
@@ -1190,6 +1266,7 @@ end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  httpc.Free;
   DefaultFormatSettings.DecimalSeparator:=chr(Tag); {Original wiederherstellen}
 end;
 
@@ -1197,7 +1274,8 @@ procedure TForm1.SendCGOcmd;                       {Command zu CGO3}
 begin
   if edSendCGO3.Text>'' then
     if CGO3run(edSendCGO3.Text, 0)=0 then begin
-      CGO3run('', 0);
+      mmoResult.Lines.Add('');
+      CGOstat;
     end else begin
       StatusBar1.Panels[2].Text:=errNoPossbl;
     end;
@@ -1233,7 +1311,7 @@ end;
 procedure TForm1.tmCGOstatusTimer(Sender: TObject);     {CGO3 Statusabfrage}
 begin
   if tabCGO3.Visible then
-    CGO3run('', 0);
+    CGOstat;
 end;
 
 end.

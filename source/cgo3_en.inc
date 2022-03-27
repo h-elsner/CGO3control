@@ -126,7 +126,8 @@ resourcestring                                     {english}
   capOpen='Open working directory...';
   capHelp='&Help';
   capInfo='About Q500log2kml';
-  rsTimeout='Timeout! No WLAN connection to CGO3';
+  rsTimeout='Timeout! No WiFi connection to CGO3';
+  rsConnError='Error trying to connect to camera';
   rsCGO3URL='CGO3 default URL';
   hntCGO3URL='Enter CGO3 URL with trailing slash';
   hntStatus='CGO3 initializing and status query';
@@ -136,6 +137,7 @@ resourcestring                                     {english}
   hntStringGrid3='Query result CGO3';
   rsVideo='Video resolution';
   rsSharpness='JPG Sharpness';
+  hntLepton='Lepton palette für CGO-ET auswählen';
   hntSharpness='Set sharpness for JPG pictures';
   rsWLANSpeed='WLAN speed';
   rsKStatus='Camera state';
@@ -153,6 +155,7 @@ resourcestring                                     {english}
   hntBitBtn22='Take a photo';
   hntRec='Record state camera';
   errNoPossbl='Invalid command';
+  capSpeed6='Send command';
   hntSpeed6='Send test command to CGO3';
   hntEdit3='Enter test command body, example: SET_AUDIO_SW&mode=0';
   hntEdit4='Test result sent from CGO3';

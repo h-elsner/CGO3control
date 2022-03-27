@@ -90,6 +90,7 @@ const
   fext='.csv';                                     {alle csv-Dateien}
   bind=' - ';                                      {von/bis ID}
   idxpage='INDEX_PAGE';
+  getstatus='GET_STATUS';
   getshpn='GET_SHARPNESS';
   CGO3dir='100MEDIA/';
   CGO3cgi='cgi-bin/cgi?CMD=';
@@ -109,9 +110,9 @@ var timestr: string;
   function CleanDN(const s: string): string;       {Ungültige Zeichen entfernen}
   function CleanNum(const s: string): string;      {Ziffern filtern}
   function FormSR(const s: string; const p: integer): string;  {füllt string mit führenden
-                                                    Leerzeichen auf Länge p}
+                                                     Leerzeichen auf Länge p}
   function IntToStrFL(const w, p: integer): string; {Wandelt Zahlen in String mit
-                                           Länge p mit führenden Leerzeichen um}
+                                                     Länge p mit führenden Leerzeichen um}
   function GetFNr(const s: string): string;        {filter a float from a string}
   function GetFVal(const s: string): double;       {get a float from a string}
   function tabs(const prefix, suffix: string; const t: integer): string;  {Tabulator + suff}
@@ -120,13 +121,12 @@ var timestr: string;
 
 implementation
 
-function KoToStr(const lanlon: double): string; inline;
-                                                   {Koordinaten zu String}
+function KoToStr(const lanlon: double): string;    {Koordinaten zu String}
 begin
   result:=FormatFloat(coordfl8, lanlon);
 end;
 
-function ChrKoor(ko: string): string; inline;      {Korrigiert Format der Koordinaten}
+function ChrKoor(ko: string): string;              {Korrigiert Format der Koordinaten}
 var co: double;
     i: integer;
     s: string;
