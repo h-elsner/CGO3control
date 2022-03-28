@@ -303,6 +303,7 @@ resourcestring                                     {deutsch}
   hntSplit='PX4 Sensordatei bei Zeitsprüngen aufteilen';
   rsConsistent='konsistent - kein Split notwendig';
   rsSplits='aufgeteilte Dateien angelegt';
+  capSave='Rückgabewerte speichern...';
 
 {GeoTagging}
   hdrEXIFPic='Dateiname,Kamera,Datum/Zeit,Treffer bei,Breitengrad,Längengrad,Relative Höhe,EXIF Daten';

@@ -14,6 +14,7 @@
         <TextName Value="CGO3control"/>
         <TextDesc Value="Yuneec CGO3 control"/>
       </XPManifest>
+      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>

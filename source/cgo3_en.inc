@@ -302,6 +302,7 @@ resourcestring                                     {english}
   hntSplit='Split PX4 Sensor file at boot time resets';
   rsConsistent='consistent - no split needed';
   rsSplits='splitted files created';
+  capSave='Save return values...';
 
 {GeoTagging}
   hdrEXIFPic='File name,Camera,Date/time,Match at,Latitude,Longitude,Altitude relative,EXIF data';

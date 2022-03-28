@@ -109,12 +109,15 @@ type
     lblTelemetry: TLabel;
     lblTimeOffset: TLabel;
     lblURL: TLabel;
+    mnSave: TMenuItem;
+    mnCopy: TMenuItem;
     mmoResult: TMemo;
     N1: TMenuItem;
     mnGeoGMap: TMenuItem;
     mnGeoOSM: TMenuItem;
     mnShowPic: TMenuItem;
     pcMain: TPageControl;
+    PopupMenuTest: TPopupMenu;
     PopupMenuGeo: TPopupMenu;
     prbSDcard: TProgressBar;
     rgPicFormat: TRadioGroup;
@@ -168,8 +171,10 @@ type
       aState: TGridDrawState);
     procedure gridTimeAreaMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure mnCopyClick(Sender: TObject);
     procedure mnGeoGMapClick(Sender: TObject);
     procedure mnGeoOSMClick(Sender: TObject);
+    procedure mnSaveClick(Sender: TObject);
     procedure mnShowPicClick(Sender: TObject);
     procedure sbtnPicFolderClick(Sender: TObject);
     procedure sbtnTelemetryClick(Sender: TObject);
@@ -335,6 +340,8 @@ begin
   edSendCGO3.Hint:=hntEdit3;
   mmoResult.Hint:=hntEdit4;
   mmoResult.Lines.Clear;
+  mnSave.Caption:=rsFileSave;
+  mnCopy.Caption:=rsToClipBoard;
 
 {GeoTagging}
   lblPicFolder.Caption:=capPicFolder;
@@ -557,8 +564,12 @@ begin
   except
     cbxCGO3WB.Text:='';
   end;
-  gridCGO3.Cells[1, 0]:=GetCGOStr('fw_ver', s);
-  gridCGO3.Cells[1, 1]:=GetCGOStr('speed_rate', s);
+  ff:=GetCGOStr('fw_ver', s);
+  if trim(ff)<>'' then
+    gridCGO3.Cells[1, 0]:=ff;
+  ff:=GetCGOStr('speed_rate', s);
+  if trim(ff)<>'' then
+    gridCGO3.Cells[1, 1]:=ff;
   gridCGO3.Cells[1, 2]:=GetCGOStr('status', s);
   gridCGO3.Cells[1, 3]:=GetCGOStr('record_time', s);
   gridCGO3.Cells[1, 4]:=GetCGOStr('awb_lock', s);
@@ -779,15 +790,18 @@ begin
 end;
 
 procedure TForm1.btnWiFiSpeedUpClick(Sender: TObject);   {Set speed}
+var
+  s: string;
+
 begin
   CGO3run('SET_WIFI_SPEED&speed_rate=9', 1);       {CGO3act=2 Dateianzeige abfragen}
-  CGOstat;
+  CGO3run('', 0);
 end;
 
 procedure TForm1.btnWiFiSpeedResetClick(Sender: TObject);
 begin
   CGO3run('SET_WIFI_SPEED&speed_rate=1', 0);       {reset Speed}
-  CGOstat;
+  CGO3run('', 0);
 end;
 
 procedure TForm1.cbxCGO3VideoChange(Sender: TObject); {Videoformat setzen}
@@ -958,6 +972,18 @@ begin
   lon:=gridEXIFPic.Cells[5, gridEXIFPic.Selection.Top];
   if (lat<>'') and (lon<>'') then
     OpenURL(URLosm(lat, lon));
+end;
+
+procedure TForm1.mnSaveClick(Sender: TObject);
+begin
+  if mmoResult.Lines.Count>0 then begin
+    SaveDialog1.FileName:='CGOresults';
+    SaveDialog1.Title:=capSave;
+    if SaveDialog1.Execute then begin
+      mmoResult.Lines.SaveToFile(SaveDialog1.FileName);
+      StatusBar1.Panels[2].Text:=SaveDialog1.FileName+tab1+rsSaved;
+    end;
+  end;
 end;
 
 procedure TForm1.btnScanPicClick(Sender: TObject); {Geotagging: Button Scan}
@@ -1212,6 +1238,11 @@ begin
     gridTimeArea.Hint:=gridTimeArea.Cells[sp, zl]
   else
     gridTimeArea.Hint:='';
+end;
+
+procedure TForm1.mnCopyClick(Sender: TObject);     {Copy result to clipboard}
+begin
+  ClipBoard.AsText:=mmoResult.Text;
 end;
 
 procedure TForm1.edReceiveCGO3DblClick(Sender: TObject);  {CGO3 Test Copy to Clipboard}
