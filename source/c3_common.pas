@@ -1,7 +1,22 @@
-{           History:
+{********************************************************}
+{                                                        }
+{     CGO3 control by CGI + Geotagging for Q500          }
+{                                                        }
+{       Copyright (c) 2015-2020    Helmut Elsner         }
+{                                                        }
+{       Compiler: FPC 3.2.2   /    Lazarus 2.2.0         }
+{                                                        }
+{ Pascal programmers tend to plan ahead, they think      }
+{ before they type. We type a lot because of Pascal      }
+{ verboseness, but usually our code is right from the    }
+{ start. We end up typing less because we fix less bugs. }
+{           [Jorge Aldo G. de F. Junior]                 }
+{********************************************************}
+
+{ History:
 
 2022-04-02  V1.0 First time stripped down from q500log2kml
-
+2022-04-15       Testpage added
 }
 
 
@@ -17,7 +32,7 @@ uses
 const
 {public constants}
   AppName=   'CGO3control';
-  AppVersion='V1.0 02/2022';
+  AppVersion='V1.0 04/2022';
 
   homepage='http://h-elsner.mooo.com';             {My Homepage}
 
