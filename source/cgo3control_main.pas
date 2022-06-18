@@ -42,11 +42,10 @@ unit CGO3control_main;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LCLType,
-  Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  Buttons, EditBtn, XMLPropStorage, Grids, Menus, lclintf, StdCtrls, Spin,
-  Clipbrd, AdvLed, Sensors, fphttpclient, lazUTF8,
-  strutils, dateutils, c3_common, fpeMetaData, fpeExifData, exifstuff;
+  Classes, SysUtils, FileUtil, LCLType, Forms, Controls, Graphics, Dialogs,
+  ExtCtrls, ComCtrls, Buttons, EditBtn, XMLPropStorage, Grids, Menus, lclintf,
+  StdCtrls, Spin, Clipbrd, fphttpclient, lazUTF8, strutils, dateutils,
+  c3_common, fpeMetaData, fpeExifData, AdvLed, Sensors, exifstuff;
 
 type
 
