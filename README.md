@@ -5,6 +5,8 @@ Important note: Use this application on your own risk. There is no guaranty for 
 Because this all was done by own tests and private researches, the interpretation of the data may be wrong.
 On the other hand, this application is freeware.
 
+![Screenshot](docs/cgo.png)
+
 Features (short description, more - see documentation):
 - CGO3 control: A simple GUI to control the camera by CGI commands via HTTP.
 - CGO3 test: Test environment for commands to CGO3 via 5G WLAN connection.
