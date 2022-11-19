@@ -12,3 +12,4 @@ Features (short description, more - see documentation):
 - CGO3 test: Test environment for commands to CGO3 via 5G WLAN connection.
 - GeoTagging: Add coordinates and altitude from telemetry files to meta data of JPG-pictures from CGO3 that do not have this in EXIF meta. Assignment of data to pictures is based on time stamp.
       
+![Screenshot](docs/EXIF.png)
