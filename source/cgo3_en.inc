@@ -317,7 +317,7 @@ resourcestring                                     {english}
   hntWritePic='Write related data to EXIF meta data of the picture';
   capBackupPic='Backup';
   hntBackupPic='Keep original picture files';
-  capTimeOffset='ZTime offset';
+  capTimeOffset='Time offset';
   hntTimeOffset='Set possibly needed time shift between picture time stamp and telemetry times';
   capCams='Cameras';
   hntCams='Filter list of cameras';
