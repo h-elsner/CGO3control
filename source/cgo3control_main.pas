@@ -244,6 +244,13 @@ begin                                              {DropDownListe füllen}
     ml.Items.Delete(MaxAnzahl);
 end;
 
+procedure SizeSpeedBtn(var btn: TSpeedbutton; cbx: TComboBox);  {Anpassen Speedbuttons an Darstellung in verschiedenen Betrienssystemen}
+begin
+  btn.Height:=cbx.Height;
+  btn.Width:=btn.Height;                           {Default: Button quadratisch}
+  btn.Top:=cbx.Top;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);      {Anwendung initialisieren und starten}
 begin
   Randomize;                                       {Zufallsgenerator initialisieren}
@@ -347,14 +354,12 @@ begin
   lblPicFolder.Hint:=hntPicFolder;
   cbxPicFolder.Hint:=hntPicFolder;
   sbtnPicFolder.Hint:=hntPicFolder;
-  sbtnPicFolder.Height:=cbxPicFolder.Height+2;
-  sbtnPicFolder.Width:=sbtnPicFolder.Height;
+  SizeSpeedBtn(sbtnPicFolder, cbxPicFolder);
   lblTelemetry.Caption:=capTelemetry;
   lblTelemetry.Hint:=hntTelemetry;
   cbxTelemetry.Hint:=hntTelemetry;
   sbtnTelemetry.Hint:=hntTelemetry;
-  sbtnTelemetry.Height:=cbxTelemetry.Height+2;
-  sbtnTelemetry.Width:=sbtnTelemetry.Height;
+  SizeSpeedBtn(sbtnTelemetry, cbxTelemetry);
   btnScanPic.Caption:=capScanPic;
   btnScanPic.Hint:=hntScanPic;
   btnWritePic.Caption:=capWritePic;
@@ -507,7 +512,6 @@ end;
 
 procedure TForm1.ResultOK;                         {Stellt alles ein, wenn WiFi gefundenwurde}
 begin
-  btnSendTest.Enabled:=true;
   btnVideoStart.Enabled:=true; {Kommandos nur nach erfolgreicher Intialisierung}
   btnVideoStop.Enabled:=true;
   btnCGO3Reset.Enabled:=true;
@@ -659,7 +663,7 @@ begin
   Image1.Visible:=false;
   Image2.Visible:=false;
   Image3.Visible:=false;
-  btnSendTest.Enabled:=false;
+//  btnSendTest.Enabled:=false;
   if not tmCGOstatus.Enabled then
     Screen.Cursor:=crHourGlass;
   try
@@ -789,9 +793,6 @@ begin
 end;
 
 procedure TForm1.btnWiFiSpeedUpClick(Sender: TObject);   {Set speed}
-var
-  s: string;
-
 begin
   CGO3run('SET_WIFI_SPEED&speed_rate=9', 1);       {CGO3act=2 Dateianzeige abfragen}
   CGO3run('', 0);
