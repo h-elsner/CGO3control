@@ -81,6 +81,7 @@ type
     cbxTelemetry: TComboBox;
     cgpCamera: TCheckGroup;
     cbxLepton: TComboBox;
+    cbFormatJSON: TCheckBox;
     edSendCGO3: TComboBox;
     edCGOURL: TEdit;
     gbCGO3Status: TGroupBox;
@@ -163,7 +164,6 @@ type
     procedure cbxCGO3ISOChange(Sender: TObject);
     procedure cbxCGO3ShutterChange(Sender: TObject);
     procedure edSendCGO3KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure edReceiveCGO3DblClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure gridEXIFPicDblClick(Sender: TObject);
     procedure gridEXIFPicPrepareCanvas(sender: TObject; aCol, aRow: Integer;
@@ -348,6 +348,7 @@ begin
   mmoResult.Lines.Clear;
   mnSave.Caption:=rsFileSave;
   mnCopy.Caption:=rsToClipBoard;
+  cbFormatJSON.Caption:=capFormatJSON;
 
 {GeoTagging}
   lblPicFolder.Caption:=capPicFolder;
@@ -673,7 +674,12 @@ begin
         result:=StrToIntDef(GetCGOStr('rval', s), -1); {Returnwert überschreiben}
         StatusBar1.Panels[2].Text:=s;              {Ergebnis unten anzeigen}
         mmoResult.Lines.Add('');
+        if cbFormatJSON.Checked and (result=0) then begin   {JSON Ausgabe formatieren}
+          s:=StringReplace(s, ',', ','+LineEnding, [rfReplaceAll]);
+          s:=StringReplace(s, '}', LineEnding+'}', [rfReplaceAll]);
+        end;
         mmoResult.Lines.Add(cgo3cmd+': '+s);       {Ergebnis protkollieren}
+
       end else begin                               {Initialisierung und Werte ausgeben}
         s:=httpc.Get(edCGOURL.Text+CGO3cgi+idxpage);
         result:=StrToIntDef(GetCGOStr('rval', s), -1);        {Returnwert Init}
@@ -689,20 +695,25 @@ begin
           StatusBar1.Panels[2].Text:=s;
         end;
       end; {Ende Initalisierung}
+
       case CGO3act of
         1: if cbFileList.Checked then
              OpenURL(edCGOURL.Text+CGO3dir);       {Datenverzeichnis im Browser öffnen}
         2: If cbRTSP.Checked then                  {Livestream anzeigen}
              OpenURL(StringReplace(edCGOURL.Text, 'http', 'rtsp',[rfIgnoreCase])+'live');
       end;
+
       if result<>0 then begin
         StopLightSensor1.State:=slRED;
         btnCGO3Time.Enabled:=false;
         btnSendTest.Enabled:=false;
       end;
+
+      mmoResult.SelStart:=Length(mmoResult.Text);  {Zum Ende springen}
       Image1.Refresh;
       Image2.Refresh;
       Image3.Refresh;
+
     except
       StatusBar1.Panels[2].Text:=rsConnError;
       result:=-1;                                  {Fehler, Timeout}
@@ -734,8 +745,6 @@ begin
         prbSDcard.Position:=0;
         StopLightSensor1.State:=slRED;
         StatusBar1.Panels[2].Text:=s;
-      end;
-      if result<>0 then begin
         StopLightSensor1.State:=slRED;
         btnCGO3Time.Enabled:=false;
         btnSendTest.Enabled:=false;
@@ -1242,11 +1251,6 @@ end;
 
 procedure TForm1.mnCopyClick(Sender: TObject);     {Copy result to clipboard}
 begin
-  ClipBoard.AsText:=mmoResult.Text;
-end;
-
-procedure TForm1.edReceiveCGO3DblClick(Sender: TObject);  {CGO3 Test Copy to Clipboard}
-begin
   If mmoResult.Text<>'' then
     ClipBoard.AsText:=edSendCGO3.Text+LineEnding+mmoResult.Text;
 end;
@@ -1301,17 +1305,19 @@ begin
   DefaultFormatSettings.DecimalSeparator:=chr(Tag); {Original wiederherstellen}
 end;
 
-procedure TForm1.SendCGOcmd;                       {Command zu CGO3}
+procedure TForm1.SendCGOcmd;                        {Command zu CGO3}
 begin
-  if edSendCGO3.Text>'' then
+  if edSendCGO3.Text<>'' then begin
     if CGO3run(edSendCGO3.Text, 0)=0 then begin
       mmoResult.Lines.Add('');
       CGOstat;
     end else begin
-      StatusBar1.Panels[2].Text:=errNoPossbl;
+      StatusBar1.Panels[2].Text:=errNotPossible;
     end;
+  end;
 end;
 
+{To format output: https://jsonformatter.org/}
 procedure TForm1.sbtnSendCGO3Click(Sender: TObject);   {Command zu CGO3}
 begin
   SendCGOcmd;

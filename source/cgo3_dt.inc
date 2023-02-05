@@ -155,7 +155,7 @@ resourcestring                                     {deutsch}
   capBitBtn22='Foto';
   hntBitBtn22='Foto aufnehmen';
   hntRec='Kamera Aufnahmestatus';
-  errNoPossbl='Ungültiger Befehl';
+  errNotPossible='Ungültiger Befehl';
   hntSpeed6='Sende Testbefehl zur CGO3';
   capSpeed6='Senden';
   hntEdit3='Pures CGO3 Kommando eingeben, Beispiel: SET_AUDIO_SW&mode=0';
@@ -304,6 +304,7 @@ resourcestring                                     {deutsch}
   rsConsistent='konsistent - kein Split notwendig';
   rsSplits='aufgeteilte Dateien angelegt';
   capSave='Rückgabewerte speichern...';
+  capFormatJSON='Formatiere JSON';
 
 {GeoTagging}
   hdrEXIFPic='Dateiname,Kamera,Datum/Zeit,Treffer bei,Breitengrad,Längengrad,Relative Höhe,EXIF Daten';

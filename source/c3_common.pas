@@ -32,7 +32,7 @@ uses
 const
 {public constants}
   AppName=   'CGO3control';
-  AppVersion='V1.0 04/2022';
+  AppVersion='V1.0 02/2023';
 
   homepage='http://h-elsner.mooo.com';             {My Homepage}
 
@@ -113,8 +113,8 @@ const
 
 var timestr: string;
 
-{$I cgo3_dt.inc}
-{.$I cgo3_en.inc}
+{.$I cgo3_dt.inc}
+{$I cgo3_en.inc}
 
 {Public functions and procedures}
 

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="Yuneec FlightLog Auswertung"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -42,16 +44,16 @@
     </RunParams>
     <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="TurboPowerIPro"/>
+        <PackageName Value="industrial"/>
       </Item1>
       <Item2>
-        <PackageName Value="fpexif_pkg"/>
+        <PackageName Value="TurboPowerIPro"/>
       </Item2>
       <Item3>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="fpexif_pkg"/>
       </Item3>
       <Item4>
-        <PackageName Value="industrial"/>
+        <PackageName Value="LazControls"/>
       </Item4>
       <Item5>
         <PackageName Value="LCL"/>

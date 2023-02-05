@@ -154,7 +154,7 @@ resourcestring                                     {english}
   capBitBtn22='Photo';
   hntBitBtn22='Take a photo';
   hntRec='Record state camera';
-  errNoPossbl='Invalid command';
+  errNotPossible='Invalid command';
   capSpeed6='Send command';
   hntSpeed6='Send test command to CGO3';
   hntEdit3='Enter test command body, example: SET_AUDIO_SW&mode=0';
@@ -303,6 +303,7 @@ resourcestring                                     {english}
   rsConsistent='consistent - no split needed';
   rsSplits='splitted files created';
   capSave='Save return values...';
+  capFormatJSON='Format JSON';
 
 {GeoTagging}
   hdrEXIFPic='File name,Camera,Date/time,Match at,Latitude,Longitude,Altitude relative,EXIF data';
